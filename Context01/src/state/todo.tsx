@@ -13,14 +13,11 @@ const TODOS: Todo[] = [
   { id: 2, text: "bar", isDone: true },
 ];
 
-export const TodosContexts = createContext<{
-  todos: Todo[];
-  setTodos: Dispatch<SetStateAction<Todo[]>>;
-}>({
-  todos: TODOS,
-  setTodos: () => {
-    throw Error("No default value");
-  },
+export const TodosContexts = createContext(TODOS);
+export const TodosDispatchContexts = createContext<
+  Dispatch<SetStateAction<Todo[]>>
+>(() => {
+  throw Error("No default value");
 });
 
 type Props = {
@@ -31,8 +28,10 @@ export const TodosProvider: FC<Props> = ({ children }) => {
   const [todos, setTodos] = useState<Todo[]>(TODOS);
 
   return (
-    <TodosContexts.Provider value={{ todos, setTodos }}>
-      {children}
+    <TodosContexts.Provider value={todos}>
+      <TodosDispatchContexts.Provider value={setTodos}>
+        {children}
+      </TodosDispatchContexts.Provider>
     </TodosContexts.Provider>
   );
 };
