@@ -4,6 +4,9 @@ import {
   FC,
   ReactNode,
   SetStateAction,
+  useCallback,
+  useContext,
+  useMemo,
   useState,
 } from "react";
 import { Todo } from "src/types";
@@ -14,10 +17,16 @@ const TODOS: Todo[] = [
 ];
 
 export const TodosContexts = createContext(TODOS);
-export const TodosDispatchContexts = createContext<
-  Dispatch<SetStateAction<Todo[]>>
->(() => {
-  throw Error("No default value");
+export const TodosDispatchContexts = createContext<{
+  toggleIsDone: (id: Todo["id"]) => void;
+  addTodo: (text: Todo["text"]) => void;
+}>({
+  toggleIsDone: () => {
+    throw Error("No default value");
+  },
+  addTodo: () => {
+    throw Error("No default value");
+  },
 });
 
 type Props = {
@@ -27,11 +36,41 @@ type Props = {
 export const TodosProvider: FC<Props> = ({ children }) => {
   const [todos, setTodos] = useState<Todo[]>(TODOS);
 
+  const toggleIsDone = useCallback((id: Todo["id"]) => {
+    setTodos((prevTodos) => {
+      return prevTodos.map((todo) => {
+        if (todo.id === id) {
+          return { ...todo, isDone: !todo.isDone };
+        }
+        return todo;
+      });
+    });
+  }, []);
+
+  const addTodo = useCallback((text: Todo["text"]) => {
+    setTodos((prevTodo: Todo[]) => {
+      const newTodos: Todo = { id: prevTodo.length + 1, text, isDone: false };
+      return [...prevTodo, newTodos];
+    });
+  }, []);
+
+  const TodosDispatchValue = useMemo(() => {
+    return { toggleIsDone, addTodo };
+  }, [toggleIsDone, addTodo]);
+
   return (
     <TodosContexts.Provider value={todos}>
-      <TodosDispatchContexts.Provider value={setTodos}>
+      <TodosDispatchContexts.Provider value={TodosDispatchValue}>
         {children}
       </TodosDispatchContexts.Provider>
     </TodosContexts.Provider>
   );
+};
+
+export const useTodos = () => {
+  return useContext(TodosContexts);
+};
+
+export const useTodosDispatch = () => {
+  return useContext(TodosDispatchContexts);
 };
