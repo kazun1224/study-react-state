@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "src/state";
-import { toggleTodo } from "src/state/Todos";
+import { toggleTodo } from "src/state/todos";
 import { Todo } from "src/types";
 
 const Home: NextPage = () => {
@@ -9,7 +9,7 @@ const Home: NextPage = () => {
   const dispatch = useDispatch();
 
   const toggleIsDone = (id: Todo["id"]) => {
-    dispatch(toggleTodo(id));
+    dispatch(toggleTodo({ id }));
   };
 
   return (
