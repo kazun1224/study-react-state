@@ -1,22 +1,15 @@
 import type { NextPage } from "next";
-import { Dispatch, SetStateAction } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "src/state";
+import { toggleTodo } from "src/state/Todos";
 import { Todo } from "src/types";
 
-export type Props = {
-  todos: Todo[];
-  setTodos: Dispatch<SetStateAction<Todo[]>>;
-};
+const Home: NextPage = () => {
+  const todos = useSelector((todos: RootState) => todos.todos);
+  const dispatch = useDispatch();
 
-const Home: NextPage<Props> = ({ todos, setTodos }) => {
   const toggleIsDone = (id: Todo["id"]) => {
-    setTodos((prevTodos) => {
-      return prevTodos.map((todo) => {
-        if (todo.id === id) {
-          return { ...todo, isDone: !todo.isDone };
-        }
-        return todo;
-      });
-    });
+    dispatch(toggleTodo(id));
   };
 
   return (
