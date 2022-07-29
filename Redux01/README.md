@@ -1,5 +1,4 @@
-# Minimal Next.js
+# Reactの状態管理
 
-```bash
-yarn create next-app --example https://github.com/lightsound/min-next
-```
+## Reduxを使用
+![Reduxの仕組み](./_img/Reduxflow.png)
